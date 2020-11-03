@@ -8,7 +8,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="css/bootstrap.min.css" >
 
-    <title>Hello, world!</title>
+    <title>Gratis - Management Interface</title>
     <style>
     html, body {
     height: 100%;
@@ -22,8 +22,8 @@
     border-color: #54d3c2;
     }
 
-    .table .form-control {
-        min-width: 200px;
+    .table .input-group {
+        min-width: 150px;
     }
     #app,
     #app > .container-fluid,
@@ -39,11 +39,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.4/vue.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase-firestore.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="js/function.js"></script>
 </head>
 <body>
 
 <nav class="navbar navbar-light bg-white shadow-sm fixed-top border-bottom">
-    <span class="navbar-brand mb-0 h1">Navbar</span>
+    <span class="navbar-brand mb-0 h1">Gratis</span>
 </nav>
 <section class="section" id="app">
    <div class="container-fluid p-0 ">
@@ -84,17 +88,23 @@
                            <tbody>
                            <tr v-for="location in locations">
                                <td style="vertical-align:middle;">{{location.id}}</td>
-                               <td><input class="form-control" v-model="location.locationName" placeholder="{{location.locationName}}"/></td>
-                               <td><input class="form-control" v-model="location.summary" placeholder="{{location.summary}}"/></td>
-                               <td><input class="form-control" v-model="location.city" placeholder="{{location.city}}"/></td>
-                               <td><input class="form-control" v-model="location.country" placeholder="{{location.country}}"/></td>
-                               <td><input class="form-control" v-model="location.backdropPath" placeholder="{{location.backdropPath}}"/></td>
-                               <td style="white-space: nowrap; text-align: right;"><button class="btn btn-info" type="button" @click="updateLocation(location)"><i class="fa fa-save"></i></button><button class="btn btn-danger ml-1" type="button" @click="deleteLocation(location.id)"><i class="fa fa-trash"></i></button></td>
+                               <td><div class="input-group"><input class="form-control" v-model="location.locationName" onkeyup="this.value = this.value.toLowerCase();" placeholder="{{location.locationName}}"/></div></td>
+                               <td><div class="input-group"><input class="form-control" v-model="location.summary" placeholder="{{location.summary}}"/></div></td>
+                               <td><div class="input-group"><input class="form-control" v-model="location.city" onkeyup="this.value = this.value.toLowerCase();" placeholder="{{location.city}}"/></div></td>
+                               <td><div class="input-group"><input class="form-control" v-model="location.country" onkeyup="this.value = this.value.toLowerCase();" placeholder="{{location.country}}"/></div></td>
+                               <td style="white-space: nowrap; text-align: right;">
+                                   <div class="input-group">
+                                       <input class="form-control d-inline-block" v-model="location.backdropPath" placeholder="{{location.backdropPath}}"/>
+                                       <div class="input-group-append">
+                                           <a class="btn btn-secondary ml-1" :href="location.backdropPath" data-toggle="tooltip" data-placement="top" title="Tooltip on top" target="_blank"><i class="fas fa-link"></i></a>
+                                       </div>
+                                   </div></td>
+                               <td style="white-space: nowrap; text-align: right;"><button class="btn btn-info" type="button" @click="updateLocation(location)"><i class="fas fa-save"></i></button><button class="btn btn-danger ml-1" type="button" @click="deleteLocation(location.id)"><i class="fa fa-trash"></i></button></td>
                            </tr>
                            </tbody>
                        </table>
                    </div>
-                   <div id="tableReviews" v-if="selected === 'reviews'">
+                   <div id="tableReviews">
                        <table class="table">
                            <thead class="thead-primary">
                            <th>ID</th>
@@ -108,8 +118,13 @@
                                <td style="vertical-align:middle;">{{review.id}}</td>
                                <td><input class="form-control" v-model="review.reviewUser" placeholder="{{review.reviewUser}}"/></td>
                                <td><input class="form-control" v-model="review.reviewBody" placeholder="{{review.reviewBody}}"/></td>
-                               <td><input class="form-control" v-model="review.reviewLocation" placeholder="{{review.reviewLocation}}"/></td>
-                               <td style="white-space: nowrap; text-align: right;"><button class="btn btn-info" type="button" @click="updateLocation(location)"><i class="fa fa-save"></i></button><button class="btn btn-danger ml-1" type="button" @click="deleteLocation(location.id)"><i class="fa fa-trash"></i></button></td>
+                               <td>
+                               <select class="form-control" v-model="review.reviewSelectedLocationName">
+                                   <option v-for="location in locations"
+                                           selected="{{location = review.reviewLocation}}">{{location.locationName}}</option>
+                               </select></td>
+                               <!--<td><input class="form-control" v-model="review.reviewLocation" placeholder="{{review.reviewLocation}}"/></td>-->
+                               <td style="white-space: nowrap; text-align: right;"><button class="btn btn-info" type="button" @click="updateReview(review)"><i class="fa fa-save"></i></button><button class="btn btn-danger ml-1" type="button" @click="deleteReview(review.id)"><i class="fa fa-trash"></i></button></td>
                            </tr>
                            </tbody>
                        </table>
@@ -119,11 +134,8 @@
        </div>
    </div>
 </section>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
 <script src="js/config.js"></script>
 <script src="js/data.js"></script>
-<script src="https://use.fontawesome.com/eedecba251.js"></script>
+<script src="https://kit.fontawesome.com/e849cb88ed.js" crossorigin="anonymous"></script>
 </body>
 </html>

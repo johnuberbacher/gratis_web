@@ -11,6 +11,7 @@ new Vue({
     inputLocationCountry: '',
     inputLocationSummary: '',
     inputLocationBackdropPath: '',
+    reviewSelectedLocationName: '',
   },
   methods: {
     fetchReviews() {
@@ -35,7 +36,7 @@ new Vue({
       return db.collection('reviews').doc(review.id)
         .set({ reviewUser: review.reviewUser, reviewBody: review.reviewBody , reviewLocation: review.reviewLocation})
         .then(() => {
-          alert(`Updated review ${review.id}`)
+          alert(`Updated Review: ${review.locationName} - &{review.reviewUser} - ${review.id}`)
           return this.fetch()
         })
     },
@@ -74,6 +75,33 @@ new Vue({
           return this.fetch()
         })
     },
+    addReview() {
+      return db.collection('reviews')
+        .add({ reviewUser: review.inputReviewUser, reviewBody: review.inputReviewBody , reviewLocation: review.inputReviewLocation})
+        .then(() => {
+          alert(`Added Review: review by ${review.inputReviewUser}`)
+          this.fetchReviews()
+        })
+    },
+    updateReview(review) {
+      return db.collection('reviews').doc(location.id)
+        .set({ reviewUser: review.inputReviewUser, reviewBody: review.inputReviewBody , reviewLocation: review.inputReviewLocation})
+        .then(() => {
+          alert(`Updated Review: review by ${review.inputReviewUser}`)
+          return this.fetchReviews()
+        })
+    },
+    deleteReview(id) {
+      var txt;
+      var accept = confirm("You are about to delete this record, are you sure?");
+      if (accept == true) {
+          return db.collection('reviews').doc(id)
+            .delete()
+            .then(() => {
+              return this.fetchLocations()
+            })
+      }
+    },
     addLocation() {
       return db.collection('locations')
         .add({ locationName: location.inputLocationName, city: location.inputLocationCity , country: location.inputLocationCountry, backdropPath: location.inputLocationBackdropPath, summary: location.inputLocationSummary})
@@ -86,7 +114,7 @@ new Vue({
       return db.collection('locations').doc(location.id)
         .set({ locationName: location.locationName, city: location.city , country: location.country, backdropPath: location.backdropPath, summary: location.summary})
         .then(() => {
-          alert(`Updated location ${location.id}`)
+          alert(`Updated Location:  ${location.locationName} - ${location.id}`)
           return this.fetchLocations()
         })
     },
@@ -130,4 +158,3 @@ async function delay(delayInms) {
     }, delayInms);
   });
 }
-
