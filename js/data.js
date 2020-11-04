@@ -5,13 +5,14 @@ new Vue({
   data: {
     locations: [],
     reviews: [],
-    selected: 'locations',
+    users: [],
     inputLocationName: '',
     inputLocationCity: '',
     inputLocationCountry: '',
     inputLocationSummary: '',
     inputLocationBackdropPath: '',
     selectedLocation: '',
+    selectedRoute: '',
   },
   methods: {
     add() {
@@ -20,6 +21,24 @@ new Vue({
         .then(refDoc => {
           this.fetch()
         })
+    },
+    fetchUsers() {
+    console.log("Fetching Users");
+      return db.collection("users")
+        .orderBy('firstName')
+        .get()
+        .then(querySnapshot =>
+          querySnapshot.docs.map(doc => {
+            let data = doc.data()
+            return {
+              id: doc.id,
+              firstName: data.firstName,
+              lastName: data.lastName,
+              fullName: data.fullName,
+            }
+          })
+         )
+        .then(users => this.users = users)
     },
     fetchReviews() {
     return db.collection("reviews")
@@ -117,6 +136,7 @@ new Vue({
   },
   created() {
     this.fetchLocations();
+    this.fetchUsers();
     this.fetchReviews();
   },
 })

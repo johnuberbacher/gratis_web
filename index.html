@@ -15,7 +15,7 @@
     margin: 0;
     padding: 0; }
     body {
-        padding-top: 56px;}
+        /*padding-top: 56px;*/}
     .table .thead-primary th {
     color: #fff;
     background-color: #54d3c2;
@@ -30,9 +30,19 @@
     #app > .container-fluid > .row {
         height: 100%;
     }
+    @media(min-width: 992px) {
+        .sidebar-wrapper {
+            position: fixed;
+            height: 100%;
+            bottom: 0;
+        }
+    }
     .sidebar {
         height: 100%;
         background: #54d3c2;
+    }
+    .justify-space-between {
+    justify-content: space-between;
     }
     </style>
     <!--Core Firebase JS SDK  -->
@@ -46,29 +56,31 @@
 </head>
 <body>
 
-<nav class="navbar navbar-light bg-white shadow-sm fixed-top border-bottom">
+<nav class="navbar navbar-light bg-white shadow-sm fixed-top border-bottom d-none">
     <span class="navbar-brand mb-0 h1">Gratis</span>
 </nav>
 <section class="section" id="app">
    <div class="container-fluid p-0 ">
        <div class="row no-gutters">
-           <div class="col-12 col-md-3 col-lg-3 col-xl-2">
+           <div class="col-12 col-md-3 col-lg-3 col-xl-2 sidebar-wrapper">
                <div class="sidebar bg-light border-right p-3">
-                   <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                       <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Home</a>
-                       <a class="nav-link" id="v-pills-locations-tab" data-toggle="pill" href="#" role="tab" aria-controls="v-pills-profile" aria-selected="false">Locations</a>
-                       <a class="nav-link" id="v-pills-destinations-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Destinations</a>
-                       <a class="nav-link" id="v-pills-reviews-tab" data-toggle="pill" href="#" role="tab" aria-controls="v-pills-messages" aria-selected="false">Reviews</a>
-                       <a class="nav-link" id="v-pills-galleries-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Galleries</a>
-                       <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Users</a>
+                   <div class="nav flex-column nav-pills justify-space-between h-100" id="v-pills-tab" role="tablist" aria-orientation="vertical" >
+                     <div>
+                         <a class="nav-link" :class="{ 'active' : selectedRoute == 'Locations'}" href="#" @click="selectedRoute = 'Locations'">Locations</a>
+                         <a class="nav-link" :class="{ 'active' : selectedRoute == 'Reviews'}" href="#" @click="selectedRoute = 'Reviews'">Reviews</a>
+                         <a class="nav-link" :class="{ 'active' : selectedRoute == 'Destinations'}" href="#" @click="selectedRoute = 'Destinations'">Destinations</a>
+                         <a class="nav-link" :class="{ 'active' : selectedRoute == 'Galleries'}" href="#" @click="selectedRoute = 'Galleries'">Galleries</a>
+                         <a class="nav-link" :class="{ 'active' : selectedRoute == 'Users'}" href="#" @click="selectedRoute = 'Users'">Users</a>
+                     </div>
+                       <button class="nav-link btn btn-outline-primary" data-toggle="modal" data-target="#addLocation">Add New Location</button>
                    </div>
              </div>
            </div>
 
-           <div class="col-12 col-md-9 col-lg-9 col-xl-10">
-               <div class="card shadow-sm m-3">
-                   <div id="tableLocations">
-                       <table class="table table-responsive">
+           <div class="col-12 col-md-9 col-lg-9 col-xl-10 mr-md-0 ml-md-auto">
+               <div class="card shadow-sm m-3" v-if="selectedRoute == 'Locations'">
+                   <div id="tableLocations" class="table-responsive">
+                       <table class="table">
                            <thead class="thead-primary">
                            <th>ID</th>
                            <th>Location Name</th>
@@ -98,8 +110,8 @@
                        </table>
                    </div>
                </div>
-                   <div class="card shadow-sm m-3">
-                   <div id="tableReviews">
+                   <div class="card shadow-sm m-3" v-if="selectedRoute == 'Reviews'">
+                   <div id="tableReviews" class="table-responsive">
                        <table class="table">
                            <thead class="thead-primary">
                            <th>ID</th>
@@ -109,16 +121,27 @@
                            <th></th>
                            </thead>
                            <tbody>
-                           <tr v-for="review in reviews" v-bind:reviewLoc="review.reviewLocation">
+                           <tr v-for="review in reviews" >
                                <td style="vertical-align:middle;">{{review.id}}</td>
-                               <td><input class="form-control" v-model="review.reviewUser"/></td>
-                               <td><input class="form-control" v-model="review.reviewBody"/></td>
                                <td>
-                               <select class="form-control " v-model="review.reviewLocation">
-                                   <option v-for="(location, index) in locations" :value="location.locationName" :selected="review.selectedLocation == location.locationName">
-                                       {{location.locationName}}
-                                    </option>
-                               </select></td>
+                                   <div class="input-group">
+                                       <select class="form-control" v-model="review.reviewUser" >
+                                           <option v-for="(user, index) in users" :value="user.fullName" :selected="review.reviewUser == user.fullName ">
+                                               {{user.fullName}}
+                                           </option>
+                                       </select>
+                                   </div>
+                               </td>
+                               <td><div class="input-group"><input class="form-control" v-model="review.reviewBody"/></div></td>
+                               <td>
+                                   <div class="input-group">
+                                       <select class="form-control" v-model="review.reviewLocation">
+                                           <option v-for="(location, index) in locations" :value="location.locationName">
+                                               {{location.locationName}}
+                                           </option>
+                                       </select>
+                                   </div>
+                               </td>
                                <td style="white-space: nowrap; text-align: right;"><button class="btn btn-info" type="button" @click="updateReview(review)"><i class="fa fa-save"></i></button><button class="btn btn-danger ml-1" type="button" @click="deleteReview(review.id)"><i class="fa fa-trash"></i></button></td>
                            </tr>
                            </tbody>
@@ -128,6 +151,44 @@
            </div>
        </div>
    </div>
+    <div class="modal fade" id="addLocation">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form>
+                    <div class="modal-header bg-primary">
+                        <h6 class="modal-title text-white">Add New Location</h6>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Location Name:</label>
+                            <input type="text" class="form-control" tabindex = "0">
+                        </div>
+                        <div class="form-group">
+                            <label>Summary:</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>City:</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Country:</label>
+                            <input type="text" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Backdrop Image Path:</label>
+                            <input type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" @submit.prevent="add()">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </section>
 <script src="js/config.js"></script>
 <script src="js/data.js"></script>
