@@ -11,34 +11,60 @@ new Vue({
     inputLocationCountry: '',
     inputLocationSummary: '',
     inputLocationBackdropPath: '',
-    reviewSelectedLocationName: '',
+    selectedLocation: '',
   },
   methods: {
-    fetchReviews() {
-      return db.collection("reviews")
-        .orderBy('reviewUser')
-        .get()
-        .then(querySnapshot =>
-          querySnapshot.docs.map(doc => {
-             console.log("Fetching Reviews");
-            let data = doc.data()
-            return {
-              id: doc.id,
-              reviewUser: data.reviewUser,
-              reviewBody: data.reviewBody,
-              reviewLocation: data.reviewLocation,
-            }
-          })
-         )
-        .then(reviews => this.reviews = reviews)
-    },
-    async updateReview(review) {
-      return db.collection('reviews').doc(review.id)
-        .set({ reviewUser: review.reviewUser, reviewBody: review.reviewBody , reviewLocation: review.reviewLocation})
-        .then(() => {
-          alert(`Updated Review: ${review.locationName} - &{review.reviewUser} - ${review.id}`)
-          return this.fetch()
+    add() {
+      return db.collection("users")
+        .add({ firstName: coords_val, })
+        .then(refDoc => {
+          this.fetch()
         })
+    },
+    fetchReviews() {
+    return db.collection("reviews")
+    .orderBy('reviewUser')
+    .get()
+    .then(querySnapshot =>
+      querySnapshot.docs.map(doc => {
+         console.log("Fetching Reviews");
+        let data = doc.data()
+        return {
+          id: doc.id,
+          reviewUser: data.reviewUser,
+          reviewBody: data.reviewBody,
+          reviewLocation: data.reviewLocation,
+        }
+      })
+     )
+    .then(reviews => this.reviews = reviews)
+    },
+    addReview() {
+      return db.collection('reviews')
+        .add({ reviewUser: review.inputReviewUser, reviewBody: review.inputReviewBody , reviewLocation: review.inputReviewLocation})
+        .then(() => {
+          alert(`Added Review: review by ${review.inputReviewUser}`)
+          this.fetchReviews()
+        })
+    },
+    updateReview(review) {
+      return db.collection('reviews').doc(review.id)
+        .set({ reviewUser: review.reviewUser, reviewBody: review.reviewBody , reviewLocation: review.reviewLocation })
+        .then(() => {
+          alert(`Updated Review: ${review.reviewLocation} - &{review.reviewUser} - ${review.id}`)
+          return this.fetchReviews()
+        })
+    },
+    deleteReview(id) {
+      var txt;
+      var accept = confirm("You are about to delete this record, are you sure?");
+      if (accept == true) {
+          return db.collection('reviews').doc(id)
+            .delete()
+            .then(() => {
+              return this.fetchLocations()
+            })
+      }
     },
     fetchLocations() {
     console.log("Fetching Locations");
@@ -59,48 +85,6 @@ new Vue({
           })
          )
         .then(locations => this.locations = locations)
-    },
-    add() {
-      return db.collection("users")
-        .add({ firstName: coords_val, })
-        .then(refDoc => {
-          this.fetch()
-        })
-    },
-    update(user) {
-      return db.collection('users').doc(user.id)
-        .set({ firstName: user.firstName, lastName: user.lastName , email: user.email})
-        .then(() => {
-          alert(`Updated user ${user.id}`)
-          return this.fetch()
-        })
-    },
-    addReview() {
-      return db.collection('reviews')
-        .add({ reviewUser: review.inputReviewUser, reviewBody: review.inputReviewBody , reviewLocation: review.inputReviewLocation})
-        .then(() => {
-          alert(`Added Review: review by ${review.inputReviewUser}`)
-          this.fetchReviews()
-        })
-    },
-    updateReview(review) {
-      return db.collection('reviews').doc(location.id)
-        .set({ reviewUser: review.inputReviewUser, reviewBody: review.inputReviewBody , reviewLocation: review.inputReviewLocation})
-        .then(() => {
-          alert(`Updated Review: review by ${review.inputReviewUser}`)
-          return this.fetchReviews()
-        })
-    },
-    deleteReview(id) {
-      var txt;
-      var accept = confirm("You are about to delete this record, are you sure?");
-      if (accept == true) {
-          return db.collection('reviews').doc(id)
-            .delete()
-            .then(() => {
-              return this.fetchLocations()
-            })
-      }
     },
     addLocation() {
       return db.collection('locations')
@@ -128,13 +112,6 @@ new Vue({
               return this.fetchLocations()
             })
       }
-    },
-    remove(id) {
-      return db.collection('locations').doc(id)
-        .delete()
-        .then(() => {
-          return this.fetch()
-        })
     },
 
   },
