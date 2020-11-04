@@ -53,13 +53,14 @@
    <div class="container-fluid p-0 ">
        <div class="row no-gutters">
            <div class="col-12 col-md-3 col-lg-3 col-xl-2">
-               <div class="sidebar">
-                   <div class="list-group" v-model="selected"style="border-radius: 0;">
-                       <a href="#" role="button" @click='selected = locations' class="list-group-item list-group-item-action">
-                           Locations
-                       </a>
-                       <a href="#" role="button" @click='selected = reviews' class="list-group-item list-group-item-action">Reviews</a>
-                       <a href="#" class="list-group-item list-group-item-action">Users</a>
+               <div class="sidebar bg-light border-right p-3">
+                   <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                       <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Home</a>
+                       <a class="nav-link" id="v-pills-locations-tab" data-toggle="pill" href="#" role="tab" aria-controls="v-pills-profile" aria-selected="false">Locations</a>
+                       <a class="nav-link" id="v-pills-destinations-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Destinations</a>
+                       <a class="nav-link" id="v-pills-reviews-tab" data-toggle="pill" href="#" role="tab" aria-controls="v-pills-messages" aria-selected="false">Reviews</a>
+                       <a class="nav-link" id="v-pills-galleries-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Galleries</a>
+                       <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Users</a>
                    </div>
              </div>
            </div>
@@ -114,14 +115,15 @@
                            <th></th>
                            </thead>
                            <tbody>
-                           <tr v-for="review in reviews">
+                           <tr v-for="review in reviews" v-bind:reviewLoc="review.reviewLocation">
                                <td style="vertical-align:middle;">{{review.id}}</td>
                                <td><input class="form-control" v-model="review.reviewUser" placeholder="{{review.reviewUser}}"/></td>
                                <td><input class="form-control" v-model="review.reviewBody" placeholder="{{review.reviewBody}}"/></td>
                                <td>
-                               <select class="form-control" v-model="review.reviewSelectedLocationName">
-                                   <option v-for="location in locations"
-                                           selected="{{location = review.reviewLocation}}">{{location.locationName}}</option>
+                               <select class="form-control text-capitalize" v-model="reviewSelectedLocationName">
+                                   <option v-for="(location, index) in locations" v-bind:value="location.name" v-bind:selected="location.name === (review.reviewBody)" >
+                                       {{location.locationName}}
+                                    </option>
                                </select></td>
                                <!--<td><input class="form-control" v-model="review.reviewLocation" placeholder="{{review.reviewLocation}}"/></td>-->
                                <td style="white-space: nowrap; text-align: right;"><button class="btn btn-info" type="button" @click="updateReview(review)"><i class="fa fa-save"></i></button><button class="btn btn-danger ml-1" type="button" @click="deleteReview(review.id)"><i class="fa fa-trash"></i></button></td>
