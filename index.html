@@ -11,24 +11,34 @@
     <title>Gratis - Management Interface</title>
     <style>
     html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0; }
-    body {
-        /*padding-top: 56px;*/}
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-size: 0.9rem;
+    }
     .table .thead-primary th {
-    color: #fff;
-    background-color: #54d3c2;
-    border-color: #54d3c2;
+        color: #fff;
+        background-color: #54d3c2;
+        border-color: #54d3c2;
     }
 
+    .form-control {
+        font-size: 0.9rem;
+    }
     .table .input-group {
         min-width: 150px;
+    }
+    .nav-pills .nav-link {
+        font-weight: 500;
     }
     #app,
     #app > .container-fluid,
     #app > .container-fluid > .row {
         height: 100%;
+    }
+    .sidebar {
+        height: 100%;
+        background: #54d3c2;
     }
     @media(min-width: 992px) {
         .sidebar-wrapper {
@@ -37,12 +47,14 @@
             bottom: 0;
         }
     }
-    .sidebar {
-        height: 100%;
-        background: #54d3c2;
+    .data-wrapper {
+        background: url(assets/images/gratis.png);
+        background-size: 40% auto;
+        background-repeat: no-repeat;
+        background-position: center center;
     }
     .justify-space-between {
-    justify-content: space-between;
+        justify-content: space-between;
     }
     </style>
     <!--Core Firebase JS SDK  -->
@@ -66,11 +78,11 @@
                <div class="sidebar bg-light border-right p-3">
                    <div class="nav flex-column nav-pills justify-space-between h-100" id="v-pills-tab" role="tablist" aria-orientation="vertical" >
                      <div>
-                         <a class="nav-link" :class="{ 'active' : selectedRoute == 'Locations'}" href="#" @click="selectedRoute = 'Locations'">Locations</a>
-                         <a class="nav-link" :class="{ 'active' : selectedRoute == 'Reviews'}" href="#" @click="selectedRoute = 'Reviews'">Reviews</a>
-                         <a class="nav-link" :class="{ 'active' : selectedRoute == 'Destinations'}" href="#" @click="selectedRoute = 'Destinations'">Destinations</a>
-                         <a class="nav-link" :class="{ 'active' : selectedRoute == 'Galleries'}" href="#" @click="selectedRoute = 'Galleries'">Galleries</a>
-                         <a class="nav-link" :class="{ 'active' : selectedRoute == 'Users'}" href="#" @click="selectedRoute = 'Users'">Users</a>
+                         <a class="nav-link" :class="{ 'active' : selectedRoute == 'Locations'}" href="javascript:void(0)" @click="selectedRoute = 'Locations'">Locations</a>
+                         <a class="nav-link" :class="{ 'active' : selectedRoute == 'Reviews'}" href="javascript:void(0)" @click="selectedRoute = 'Reviews'">Reviews</a>
+                         <a class="nav-link" :class="{ 'active' : selectedRoute == 'Destinations'}" href="javascript:void(0)" @click="selectedRoute = 'Destinations'">Destinations</a>
+                         <a class="nav-link" :class="{ 'active' : selectedRoute == 'Galleries'}" href="javascript:void(0)" @click="selectedRoute = 'Galleries'">Galleries</a>
+                         <a class="nav-link" :class="{ 'active' : selectedRoute == 'Users'}" href="javascript:void(0)" @click="selectedRoute = 'Users'">Users</a>
                      </div>
                    <button class="nav-link btn btn-primary mt-5" v-if="selectedRoute == 'Locations'" data-toggle="modal" data-target="#addLocation">Add New Location</button>
                    <button class="nav-link btn btn-primary mt-5" v-if="selectedRoute == 'Reviews'" data-toggle="modal" data-target="#addReview">Add New Review</button>
@@ -78,7 +90,7 @@
              </div>
            </div>
 
-           <div class="col-12 col-md-9 col-lg-9 col-xl-10 mr-md-0 ml-md-auto">
+           <div class="col-12 col-md-9 col-lg-9 col-xl-10 mr-md-0 ml-md-auto data-wrapper">
                <div class="card shadow-sm m-3" v-if="selectedRoute == 'Locations'">
                    <div id="tableLocations" class="table-responsive">
                        <table class="table">
@@ -121,7 +133,7 @@
                                    <div class="modal-body">
                                        <div class="form-group">
                                            <label>Location Name:</label>
-                                           <input class="form-control" v-model="inputLocationName"  onkeyup="this.value = this.value.toLowerCase();">
+                                           <input class="form-control" v-model="inputLocationName"  onkeyup="this.value = this.value.toLowerCase();" required="required">
                                        </div>
                                        <div class="form-group">
                                            <label>Summary:</label>
@@ -129,11 +141,11 @@
                                        </div>
                                        <div class="form-group">
                                            <label>City:</label>
-                                           <input class="form-control" v-model="inputLocationCity"  onkeyup="this.value = this.value.toLowerCase();">
+                                           <input class="form-control" v-model="inputLocationCity"  onkeyup="this.value = this.value.toLowerCase();" required="required">
                                        </div>
                                        <div class="form-group">
                                            <label>Country:</label>
-                                           <input class="form-control" v-model="inputLocationCountry"  onkeyup="this.value = this.value.toLowerCase();">
+                                           <input class="form-control" v-model="inputLocationCountry"  onkeyup="this.value = this.value.toLowerCase();" required="required">
                                        </div>
                                        <div class="form-group">
                                            <label>Backdrop Image Path:</label>
@@ -199,18 +211,18 @@
                                                <label>Reviewer Name:</label>
                                                <!--<input class="form-control" v-model="inputReviewUser" onkeyup="this.value = this.value.toLowerCase();">-->
                                                <select class="form-control" v-model="inputReviewUser">
-                                                   <option v-for="(user, index) in users" :value="user.fullName">
+                                                   <option v-for="(user, index) in users" :value="user.fullName" required="required">
                                                        {{user.fullName}}
                                                    </option>
                                                </select>
                                            </div>
                                            <div class="form-group">
                                                <label>Review Content:</label>
-                                               <input class="form-control" v-model="inputReviewBody">
+                                               <input class="form-control" v-model="inputReviewBody" required="required">
                                            </div>
                                            <div class="form-group">
                                                <label>Review Location:</label>
-                                               <input class="form-control" v-model="inputReviewLocation" onkeyup="this.value = this.value.toLowerCase();">
+                                               <input class="form-control" v-model="inputReviewLocation" onkeyup="this.value = this.value.toLowerCase();" required="required">
                                            </div>
                                        </div>
                                        <div class="modal-footer">
