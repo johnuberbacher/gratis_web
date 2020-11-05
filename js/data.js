@@ -6,11 +6,14 @@ new Vue({
     locations: [],
     reviews: [],
     users: [],
-    inputLocationName: '',
-    inputLocationCity: '',
-    inputLocationCountry: '',
-    inputLocationSummary: '',
-    inputLocationBackdropPath: '',
+    inputLocationName: null,
+    inputLocationCity: null,
+    inputLocationCountry: null,
+    inputLocationSummary: null,
+    inputLocationBackdropPath: null,
+    inputReviewUser: null,
+    inputReviewBody: null,
+    inputReviewLocation: null,
     selectedLocation: '',
     selectedRoute: '',
   },
@@ -60,9 +63,10 @@ new Vue({
     },
     addReview() {
       return db.collection('reviews')
-        .add({ reviewUser: review.inputReviewUser, reviewBody: review.inputReviewBody , reviewLocation: review.inputReviewLocation})
+        .add({ reviewUser: this.inputReviewUser, reviewBody: this.inputReviewBody , reviewLocation: this.inputReviewLocation})
         .then(() => {
-          alert(`Added Review: review by ${review.inputReviewUser}`)
+          alert(`New Review Saved: review by ${this.inputReviewUser} for ${this.inputReviewLocation}`)
+          $('.modal').modal('hide')
           this.fetchReviews()
         })
     },
@@ -106,10 +110,10 @@ new Vue({
         .then(locations => this.locations = locations)
     },
     addLocation() {
-      return db.collection('locations')
-        .add({ locationName: location.inputLocationName, city: location.inputLocationCity , country: location.inputLocationCountry, backdropPath: location.inputLocationBackdropPath, summary: location.inputLocationSummary})
+      return db.collection('locations').add({  locationName: this.inputLocationName, locationName: this.inputLocationName, city: this.inputLocationCity , country: this.inputLocationCountry, backdropPath: this.inputLocationBackdropPath, summary: this.inputLocationSummary})
         .then(() => {
-          alert(`Added location ${location.inputLocationName}`)
+          alert(`New Location Saved: ${this.inputLocationName} - ${this.inputLocationCity}, ${this.inputLocationCountry}`)
+          $('.modal').modal('hide')
           this.fetchLocations()
         })
     },
