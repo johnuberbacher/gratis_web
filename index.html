@@ -50,7 +50,9 @@
                            <thead class="thead-primary">
                            <th>ID</th>
                            <th>Location Name</th>
+                           <th>Created</th>
                            <th>Summary</th>
+                           <th>USD/Night</th>
                            <th>City</th>
                            <th>Country</th>
                            <th>Backdrop Path</th>
@@ -60,7 +62,9 @@
                            <tr v-for="location in locations">
                                <td style="vertical-align:middle;">{{location.id}}</td>
                                <td><div class="input-group"><input class="form-control" v-model="location.locationName" onkeyup="this.value = this.value.toLowerCase();" placeholder="{{location.locationName}}"/></div></td>
+                               <td><div class="input-group"><input class="form-control" v-model="location.created" placeholder="{{location.created}}" disabled></div></td>
                                <td><div class="input-group"><input class="form-control" v-model="location.summary" placeholder="{{location.summary}}"/></div></td>
+                               <td><div class="input-group"><input class="form-control" v-model="location.rateUSD" placeholder="{{location.rateUSD}}" type="number" min="1.00" max="100000"/></div></td>
                                <td><div class="input-group"><input class="form-control" v-model="location.city" onkeyup="this.value = this.value.toLowerCase();" placeholder="{{location.city}}"/></div></td>
                                <td><div class="input-group"><input class="form-control" v-model="location.country" onkeyup="this.value = this.value.toLowerCase();" placeholder="{{location.country}}"/></div></td>
                                <td style="white-space: nowrap; text-align: right;">
@@ -120,6 +124,7 @@
                                <thead class="thead-primary">
                                <th>ID</th>
                                <th>Reviewer Name</th>
+                               <th>Created</th>
                                <th>Review Content</th>
                                <th>Review Location</th>
                                <th></th>
@@ -136,6 +141,7 @@
                                            </select>
                                        </div>
                                    </td>
+                                   <td><div class="input-group"><input class="form-control" v-model="review.created" placeholder="{{review.created}}" disabled></div></td>
                                    <td><div class="input-group"><input class="form-control" v-model="review.reviewBody"/></div></td>
                                    <td>
                                        <div class="input-group">
@@ -163,19 +169,24 @@
                                            <div class="form-group">
                                                <label>Reviewer Name:</label>
                                                <!--<input class="form-control" v-model="inputReviewUser" onkeyup="this.value = this.value.toLowerCase();">-->
-                                               <select class="form-control" v-model="inputReviewUser">
-                                                   <option v-for="(user, index) in users" :value="user.fullName" required="required">
+                                               <select class="form-control" v-model="inputReviewUser" required="required">
+                                                   <option v-for="(user, index) in users" :value="user.fullName">
                                                        {{user.fullName}}
                                                    </option>
                                                </select>
                                            </div>
                                            <div class="form-group">
-                                               <label>Review Content:</label>
-                                               <input class="form-control" v-model="inputReviewBody" required="required">
+                                               <label>Review Location:</label>
+                                               <!--<input class="form-control" v-model="inputReviewLocation" onkeyup="this.value = this.value.toLowerCase();">-->
+                                               <select class="form-control" v-model="inputReviewLocation" required="required">
+                                                   <option v-for="(location, index) in locations" :value="location.locationName">
+                                                       {{location.locationName}}
+                                                   </option>
+                                               </select>
                                            </div>
                                            <div class="form-group">
-                                               <label>Review Location:</label>
-                                               <input class="form-control" v-model="inputReviewLocation" onkeyup="this.value = this.value.toLowerCase();" required="required">
+                                               <label>Review Content:</label>
+                                               <textarea class="form-control" v-model="inputReviewBody" required="required"></textarea>
                                            </div>
                                        </div>
                                        <div class="modal-footer">

@@ -18,6 +18,10 @@ new Vue({
     selectedRoute: '',
   },
   methods: {
+    clearModals(){
+        $('.modal').modal('hide')
+        $('.modal .form').reset();
+    },
     add() {
       return db.collection("users")
         .add({ firstName: coords_val, })
@@ -56,6 +60,7 @@ new Vue({
           reviewUser: data.reviewUser,
           reviewBody: data.reviewBody,
           reviewLocation: data.reviewLocation,
+          created: data.created,
         }
       })
      )
@@ -63,10 +68,10 @@ new Vue({
     },
     addReview() {
       return db.collection('reviews')
-        .add({ reviewUser: this.inputReviewUser, reviewBody: this.inputReviewBody , reviewLocation: this.inputReviewLocation})
+        .add({ reviewUser: this.inputReviewUser, reviewBody: this.inputReviewBody , reviewLocation: this.inputReviewLocation, created: firebase.firestore.FieldValue.serverTimestamp()})
         .then(() => {
           alert(`New Review Saved: review by ${this.inputReviewUser} for ${this.inputReviewLocation}`)
-          $('.modal').modal('hide')
+          this.clearModals()
           this.fetchReviews()
         })
     },
@@ -75,7 +80,8 @@ new Vue({
         .set({ reviewUser: review.reviewUser, reviewBody: review.reviewBody , reviewLocation: review.reviewLocation })
         .then(() => {
           alert(`Updated Review: ${review.reviewLocation} - &{review.reviewUser} - ${review.id}`)
-          return this.fetchReviews()
+          this.clearModals()
+          this.fetchReviews()
         })
     },
     deleteReview(id) {
@@ -101,25 +107,27 @@ new Vue({
               id: doc.id,
               locationName: data.locationName,
               summary: data.summary,
+              rateUSD: data.rateUSD,
               city: data.city,
               country: data.country,
               backdropPath: data.backdropPath,
+              created: data.created,
             }
           })
          )
         .then(locations => this.locations = locations)
     },
     addLocation() {
-      return db.collection('locations').add({  locationName: this.inputLocationName, locationName: this.inputLocationName, city: this.inputLocationCity , country: this.inputLocationCountry, backdropPath: this.inputLocationBackdropPath, summary: this.inputLocationSummary})
+      return db.collection('locations').add({  locationName: this.inputLocationName, created: firebase.firestore.FieldValue.serverTimestamp(), locationName: this.inputLocationName, city: this.inputLocationCity , country: this.inputLocationCountry, backdropPath: this.inputLocationBackdropPath, summary: this.inputLocationSummary})
         .then(() => {
           alert(`New Location Saved: ${this.inputLocationName} - ${this.inputLocationCity}, ${this.inputLocationCountry}`)
-          $('.modal').modal('hide')
+          this.clearModals()
           this.fetchLocations()
         })
     },
     updateLocation(location) {
       return db.collection('locations').doc(location.id)
-        .set({ locationName: location.locationName, city: location.city , country: location.country, backdropPath: location.backdropPath, summary: location.summary})
+        .set({ locationName: location.locationName, city: location.city , country: location.country, backdropPath: location.backdropPath, rateUSD: location.rateUSD, summary: location.summary})
         .then(() => {
           alert(`Updated Location:  ${location.locationName} - ${location.id}`)
           return this.fetchLocations()
